@@ -1,37 +1,495 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EdgeQuantia | Terminal de Análisis Cuantitativo</title>
+    <meta name="description" content="Plataforma gratuita de herramientas para trading institucional. Calculadoras de riesgo, análisis de volatilidad y métricas Kähler.">
     
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-ancestors 'none'; form-action 'none';">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <meta name="description" content="EdgeQuantia - Soluciones avanzadas en tecnología y finanzas. Sitio en construcción.">
-    <meta name="author" content="NieMarCorp">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     
-    <title>EdgeQuantia | Próximamente</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- Iconos -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     
-    <link rel="icon" href="data:,">
+    <!-- Chart.js para visualización de datos en vivo -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eq: {
+                            bg: '#020617',     
+                            surface: '#0f172a', 
+                            primary: '#10b981', 
+                            accent: '#8b5cf6',  
+                            danger: '#ef4444', 
+                            warning: '#f59e0b',
+                            text: '#f8fafc'     
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        .glass-tool {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .eq-input {
+            background: #020617;
+            border: 1px solid #1e293b;
+            color: #f8fafc;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+        .eq-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+        .terminal-text {
+            text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1 class="logo">EdgeQuantia</h1>
-        </header>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-white/5 bg-[#020617]/95 backdrop-blur-md">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse group">
+                <div class="relative w-10 h-10 overflow-hidden rounded bg-eq-surface border border-eq-accent/30 group-hover:border-eq-primary transition-colors flex items-center justify-center">
+                    <img src="./Gemini_Generated_Image_h4zkrph4zkrph4zk.jpg" class="w-full h-full object-cover opacity-90" alt="EdgeQuantia Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="hidden flex-col items-center justify-center leading-none">
+                        <span class="text-eq-primary font-bold font-mono text-xs">EQ</span>
+                    </div>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-xl font-bold tracking-widest text-white font-sans uppercase">Edge<span class="text-eq-primary">Quantia</span></span>
+                    <span class="text-[10px] text-gray-500 font-mono tracking-widest">OPEN ANALYTICS PLATFORM</span>
+                </div>
+            </a>
+            
+            <div class="flex md:order-2 space-x-3">
+                 <div class="hidden md:flex items-center mr-4 px-3 py-1 bg-gray-900 rounded border border-gray-800">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
+                    <span class="text-xs font-mono text-green-400" id="connectionStatus">SYSTEM ONLINE</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-10 overflow-hidden">
+        <div class="py-8 px-4 mx-auto max-w-screen-xl text-center z-10 relative">
+            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-6xl font-sans uppercase">
+                Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-eq-primary via-emerald-300 to-eq-accent">Live Scanner</span>
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+                Implementación web de algoritmos de <span class="text-eq-accent">Fuerza Kähler</span> y detección de anomalías de volumen en tiempo real para BTC/USD.
+            </p>
+        </div>
+    </section>
+
+    <!-- MAIN DASHBOARD -->
+    <section id="dashboard" class="py-8 relative z-10">
+        <div class="max-w-screen-xl mx-auto px-4 grid lg:grid-cols-3 gap-6">
+            
+            <!-- COLUMNA IZQUIERDA: CALCULADORA (Herramienta Estática) -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Calculadora -->
+                <div class="glass-tool rounded-xl p-6 border-t-2 border-t-eq-primary">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg text-white font-bold font-sans uppercase tracking-wider">Calculadora de Riesgo</h3>
+                        <i data-lucide="calculator" class="text-eq-primary w-5 h-5"></i>
+                    </div>
+                    
+                    <form id="riskForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 font-mono mb-1">CAPITAL (USD)</label>
+                            <input type="number" id="accountSize" value="10000" class="eq-input w-full p-2 rounded text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 font-mono mb-1">RIESGO (%)</label>
+                            <input type="number" id="riskPercent" value="1.0" step="0.1" class="eq-input w-full p-2 rounded text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 font-mono mb-1">ENTRADA</label>
+                                <input type="number" id="entryPrice" value="65000" class="eq-input w-full p-2 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 font-mono mb-1">STOP LOSS</label>
+                                <input type="number" id="stopPrice" value="64500" class="eq-input w-full p-2 rounded text-sm text-eq-danger">
+                            </div>
+                        </div>
+                        <button type="button" onclick="calculateRisk()" class="w-full bg-eq-primary/10 hover:bg-eq-primary/20 text-eq-primary border border-eq-primary/50 font-mono font-bold py-2 rounded mt-2 transition-all">
+                            CALCULAR POSICIÓN
+                        </button>
+                    </form>
+
+                    <!-- Resultados Calculadora -->
+                    <div class="mt-4 pt-4 border-t border-gray-700/50">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs text-gray-500 font-mono">RIESGO:</span>
+                            <span id="riskAmountResult" class="text-sm font-bold text-eq-danger">0.00 USD</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500 font-mono">TAMAÑO:</span>
+                            <span id="posSizeResult" class="text-sm font-bold text-white">0.00 USD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de Estado del Mercado (Scanner Output) -->
+                <div class="glass-tool rounded-xl p-6 border-t-2 border-t-eq-accent">
+                    <h3 class="text-lg text-white font-bold font-sans uppercase tracking-wider mb-4">Señales Algorítmicas</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-900/50 p-3 rounded border border-gray-800">
+                            <span class="text-[10px] text-gray-500 font-mono block mb-1">ESTADO MERCADO (KAHLER)</span>
+                            <div id="marketStatus" class="text-lg font-bold text-gray-400 font-mono">ESPERANDO DATOS...</div>
+                        </div>
+
+                        <div class="bg-gray-900/50 p-3 rounded border border-gray-800">
+                            <span class="text-[10px] text-gray-500 font-mono block mb-1">SEGURIDAD VOLUMEN (FORENSE)</span>
+                            <div id="volStatus" class="text-sm font-bold text-gray-400 font-mono">ANALIZANDO...</div>
+                        </div>
+
+                        <div class="flex justify-between text-xs font-mono mt-2">
+                            <span class="text-gray-500">PRECIO ACTUAL:</span>
+                            <span id="livePrice" class="text-white terminal-text">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: GRÁFICOS EN VIVO (Scanner Python Port) -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Gráfico Principal: Precio & Anomalías -->
+                <div class="glass-tool rounded-xl p-4 h-[400px] flex flex-col relative">
+                    <div class="absolute top-4 left-4 z-10 flex gap-2">
+                        <span class="bg-gray-900/80 px-2 py-1 rounded text-[10px] text-eq-primary font-mono border border-eq-primary/20">BTC/USDT</span>
+                        <span class="bg-gray-900/80 px-2 py-1 rounded text-[10px] text-eq-accent font-mono border border-eq-accent/20">1S INTERVAL</span>
+                    </div>
+                    <canvas id="mainChart"></canvas>
+                </div>
+
+                <!-- Gráfico Secundario: Fuerza Kähler -->
+                <div class="glass-tool rounded-xl p-4 h-[250px] flex flex-col relative">
+                    <div class="absolute top-2 left-4 z-10">
+                         <span class="text-[10px] text-gray-400 font-mono uppercase">Indicador de Fuerza Kähler (Momentum * Volumen)</span>
+                    </div>
+                    <canvas id="kahlerChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-900 py-8 font-mono text-xs mt-auto">
+        <div class="max-w-screen-xl mx-auto px-4 text-center">
+            <p class="text-gray-600">Desarrollado con ❤️ por <a href="https://niemarcorp.com" class="text-blue-500 hover:underline">NieMarCorp</a></p>
+            <div class="mt-4 text-gray-700 max-w-2xl mx-auto">
+                <strong>NOTA TÉCNICA:</strong> Este dashboard conecta vía WebSocket público. La lógica de "Fuerza Kähler" se ejecuta localmente en su navegador usando JavaScript. No constituye asesoramiento financiero.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        lucide.createIcons();
+
+        // --- 1. CONFIGURACIÓN DE GRÁFICOS (Chart.js) ---
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = 'JetBrains Mono';
+
+        const ctxMain = document.getElementById('mainChart').getContext('2d');
+        const ctxKahler = document.getElementById('kahlerChart').getContext('2d');
+
+        // Gráfico Principal (Precio)
+        const mainChart = new Chart(ctxMain, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'BTC Price',
+                    data: [],
+                    borderColor: '#00ffcc',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false }, // Ocultar eje X para limpieza
+                    y: { 
+                        position: 'right',
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                animation: false // Desactivar para rendimiento en tiempo real
+            }
+        });
+
+        // Gráfico Secundario (Fuerza Kahler)
+        const kahlerChart = new Chart(ctxKahler, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Kähler Strength',
+                    data: [],
+                    backgroundColor: (context) => {
+                        const val = context.raw;
+                        return val >= 0 ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+                    },
+                    borderColor: (context) => {
+                         const val = context.raw;
+                        return val >= 0 ? '#10b981' : '#ef4444';
+                    },
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { 
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { display: false } // Ocultar valores Y para limpieza
+                    }
+                },
+                animation: false
+            }
+        });
+
+        // --- 2. LÓGICA DE DATOS Y ALGORITMOS (Traducción Python -> JS) ---
         
-        <main>
-            <div class="shield-icon">🛡️</div>
-            <h2>Sitio Web en Construcción</h2>
-            <p>Estamos desarrollando una infraestructura segura para el futuro de las finanzas.</p>
-            <p class="status">Estado: <span class="blink">Desarrollando núcleo...</span></p>
-        </main>
+        // Variables de estado
+        let priceData = []; // Array de objetos {close, open, volume, time}
+        const MAX_POINTS = 50; // Mantener solo los últimos 50 puntos para rendimiento
         
-        <footer>
-            <p>&copy; 2025 EdgeQuantia. Todos los derechos reservados.</p>
-            <p class="dev-signature">Desarrollado por <strong>NieMarCorp</strong></p>
-        </footer>
-    </div>
+        // Conexión WebSocket a Binance (Datos reales sin CORS)
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
+        
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            const kline = msg.k; // Objeto kline de Binance
+            
+            // Solo procesamos si la vela está cerrada o cada X tiempo para actualizar
+            // Para efecto "Live", usamos los datos tal cual llegan
+            
+            const currentPrice = parseFloat(kline.c);
+            const openPrice = parseFloat(kline.o);
+            const volume = parseFloat(kline.v);
+            const time = new Date(kline.t).toLocaleTimeString();
+
+            updateDashboard(currentPrice, openPrice, volume, time);
+        };
+
+        ws.onopen = () => {
+            document.getElementById('connectionStatus').innerText = "CONEXIÓN ESTABLE (BINANCE)";
+            document.getElementById('connectionStatus').classList.remove('text-red-500');
+            document.getElementById('connectionStatus').classList.add('text-green-400');
+        };
+
+        ws.onerror = () => {
+            document.getElementById('connectionStatus').innerText = "CONEXIÓN PERDIDA";
+            document.getElementById('connectionStatus').classList.remove('text-green-400');
+            document.getElementById('connectionStatus').classList.add('text-red-500');
+        }
+
+        // Función Principal de Cálculo y Actualización
+        function updateDashboard(close, open, volume, time) {
+            // 1. Actualizar Precio en UI
+            document.getElementById('livePrice').innerText = `$${close.toFixed(2)}`;
+            
+            // 2. Almacenar datos históricos
+            priceData.push({ close, open, volume, rawStrength: 0, kahler: 0 });
+            if(priceData.length > MAX_POINTS) priceData.shift();
+
+            // 3. CALCULAR INDICADORES (Lógica del Script Python)
+            calculateIndicators();
+
+            // 4. Actualizar Gráficos
+            updateCharts(time);
+
+            // 5. Analizar Señales
+            analyzeSignals();
+        }
+
+        function calculateIndicators() {
+            // Necesitamos al menos unos puntos para calcular EMA
+            if (priceData.length < 2) return;
+
+            // --- A. Fuerza Kahler ---
+            // Python: data['Raw_Strength'] = (data['Close'] - data['Open']) * data['Volume']
+            const lastIdx = priceData.length - 1;
+            const current = priceData[lastIdx];
+            current.rawStrength = (current.close - current.open) * current.volume;
+
+            // Python: data['Kahler_Strength'] = data['Raw_Strength'].ewm(span=13)...
+            // EMA Simple implementation
+            const alpha = 2 / (13 + 1); // Smoothing factor for span=13
+            const prevKahler = priceData[lastIdx - 1].kahler || 0;
+            
+            current.kahler = (current.rawStrength * alpha) + (prevKahler * (1 - alpha));
+        }
+
+        function updateCharts(time) {
+            // Actualizar Chart Main
+            mainChart.data.labels.push(time);
+            mainChart.data.datasets[0].data.push(priceData[priceData.length-1].close);
+            
+            if(mainChart.data.labels.length > MAX_POINTS) {
+                mainChart.data.labels.shift();
+                mainChart.data.datasets[0].data.shift();
+            }
+            mainChart.update();
+
+            // Actualizar Chart Kahler
+            kahlerChart.data.labels.push(time);
+            kahlerChart.data.datasets[0].data.push(priceData[priceData.length-1].kahler);
+            
+            if(kahlerChart.data.labels.length > MAX_POINTS) {
+                kahlerChart.data.labels.shift();
+                kahlerChart.data.datasets[0].data.shift();
+            }
+            kahlerChart.update();
+        }
+
+        function analyzeSignals() {
+            if (priceData.length < 5) return;
+
+            const last = priceData[priceData.length - 1];
+            const prev = priceData[priceData.length - 2];
+
+            // --- Señal Kahler ---
+            let statusText = "⚪ NEUTRAL";
+            let statusColor = "text-gray-400";
+
+            if (last.kahler > 0 && prev.kahler <= 0) {
+                statusText = "🟢 COMPRA FUERTE (CRUCE)";
+                statusColor = "text-eq-primary";
+            } else if (last.kahler < 0 && prev.kahler >= 0) {
+                statusText = "🔴 VENTA FUERTE (CRUCE)";
+                statusColor = "text-eq-danger";
+            } else if (last.kahler > 0) {
+                statusText = "🟢 TENDENCIA ALCISTA";
+                statusColor = "text-green-400";
+            } else if (last.kahler < 0) {
+                statusText = "🔴 TENDENCIA BAJISTA";
+                statusColor = "text-red-400";
+            }
+
+            const marketStatusEl = document.getElementById('marketStatus');
+            marketStatusEl.innerText = statusText;
+            marketStatusEl.className = `text-lg font-bold font-mono ${statusColor}`;
+
+            // --- Análisis Forense de Volumen (Simplificado para JS Realtime) ---
+            // Calculamos media y std dev de los últimos 20 puntos del array
+            const volumes = priceData.map(d => d.volume);
+            const meanVol = volumes.reduce((a, b) => a + b, 0) / volumes.length;
+            const stdVol = Math.sqrt(volumes.map(x => Math.pow(x - meanVol, 2)).reduce((a, b) => a + b) / volumes.length);
+            
+            const zScore = (last.volume - meanVol) / (stdVol || 1); // Evitar div por 0
+
+            let volText = "✅ VOLUMEN NORMAL";
+            let volColor = "text-green-400";
+
+            if (zScore > 3.0) {
+                volText = "⚠️ ALERTA: MANIPULACIÓN DETECTADA";
+                volColor = "text-eq-warning animate-pulse";
+            } else if (zScore > 2.0) {
+                volText = "🔍 INFO: ACTIVIDAD INSTITUCIONAL";
+                volColor = "text-blue-400";
+            }
+
+            const volStatusEl = document.getElementById('volStatus');
+            volStatusEl.innerText = `${volText} (Z: ${zScore.toFixed(2)})`;
+            volStatusEl.className = `text-sm font-bold font-mono ${volColor}`;
+        }
+
+
+        // --- 3. LÓGICA DE CALCULADORA (Existente) ---
+        function calculateRisk() {
+            const account = parseFloat(document.getElementById('accountSize').value);
+            const riskPct = parseFloat(document.getElementById('riskPercent').value);
+            const entry = parseFloat(document.getElementById('entryPrice').value);
+            const stop = parseFloat(document.getElementById('stopPrice').value);
+
+            if(!account || !entry || !stop) return;
+
+            const riskAmount = account * (riskPct / 100);
+            const priceDiff = Math.abs(entry - stop);
+            const units = riskAmount / priceDiff;
+            const positionSize = units * entry;
+
+            animateValue("riskAmountResult", 0, riskAmount, 500, "$");
+            animateValue("posSizeResult", 0, positionSize, 500, "$");
+        }
+
+        function animateValue(id, start, end, duration, prefix) {
+            let obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = prefix + (progress * (end - start) + start).toFixed(2);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // Calcular una vez al inicio para UI
+        calculateRisk();
+
+    </script>
 </body>
 </html>
