@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviso Legal | EdgeQuantia</title>
+    <meta name="robots" content="noindex, follow">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eq: {
+                            bg: '#020617',      
+                            surface: '#0f172a', 
+                            primary: '#10b981', 
+                            accent: '#8b5cf6',  
+                            danger: '#ef4444', 
+                            warning: '#f59e0b',
+                            text: '#f8fafc'      
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; color: #f8fafc; }
+        .legal-box { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(15, 23, 42, 0.5); }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- Nav Simple -->
+    <nav class="w-full border-b border-white/5 bg-[#020617] p-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-2 group text-eq-primary hover:text-white transition-colors">
+                <i data-lucide="terminal" class="w-5 h-5"></i>
+                <span class="font-mono text-sm">/root/return_terminal</span>
+            </a>
+            <span class="font-sans font-bold text-white tracking-widest uppercase">Edge<span class="text-eq-primary">Quantia</span></span>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-16">
+        <div class="flex items-center gap-3 mb-2">
+            <i data-lucide="shield-alert" class="text-eq-primary w-8 h-8"></i>
+            <h1 class="text-4xl font-bold uppercase tracking-wider">Aviso Legal y Riesgos</h1>
+        </div>
+        <p class="text-gray-500 font-mono text-xs mb-12 border-l-2 border-eq-primary pl-4">PROTOCOLO LEGAL v1.0 | ACTUALIZADO: ENERO 2026</p>
+
+        <div class="space-y-12 text-gray-300">
+            
+            <!-- 1. Identidad -->
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="text-eq-primary font-mono">01.</span> Titularidad
+                </h2>
+                <div class="legal-box p-6 rounded-lg">
+                    <p class="mb-4">EdgeQuantia es un proyecto de desarrollo de software propietario, gestionado por:</p>
+                    <ul class="font-mono text-sm space-y-2 text-eq-accent">
+                        <li>> Desarrollador: Alejandro Gabriel Martin</li>
+                        <li>> Marca Matriz: NieMarCorp</li>
+                        <li>> Ubicación: Buenos Aires, Argentina</li>
+                        <li>> Contacto: contacto@niemarcorp.com</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 2. RIESGO FINANCIERO (CRÍTICO) -->
+            <section>
+                <h2 class="text-2xl font-bold text-eq-danger mb-4 flex items-center gap-2">
+                    <span class="font-mono">02.</span> Exención de Responsabilidad Financiera
+                </h2>
+                <div class="border border-eq-danger/30 bg-eq-danger/5 p-6 rounded-lg">
+                    <p class="mb-4 font-bold text-white">LEA ATENTAMENTE:</p>
+                    <p class="mb-4 text-justify">
+                        <strong>EdgeQuantia NO es un asesor financiero, ni un bróker, ni una entidad regulada por la CNV (Comisión Nacional de Valores) ni ningún otro organismo financiero internacional.</strong>
+                    </p>
+                    <p class="mb-4 text-justify">
+                        Las herramientas, calculadoras, indicadores (incluido "Fuerza Kähler") y gráficos presentados en este sitio web tienen fines <strong>ESTRICTAMENTE EDUCATIVOS Y DE INVESTIGACIÓN TECNOLÓGICA</strong>.
+                    </p>
+                    <ul class="list-disc ml-5 space-y-2 text-gray-400">
+                        <li>El trading de criptomonedas y activos financieros conlleva un <strong>alto nivel de riesgo</strong> y puede no ser adecuado para todos los inversores.</li>
+                        <li>Existe la posibilidad de que pierda parte o la totalidad de su inversión inicial.</li>
+                        <li>No debe invertir dinero que no pueda permitirse perder.</li>
+                        <li>El rendimiento pasado de cualquier sistema de trading o metodología no es necesariamente indicativo de resultados futuros.</li>
+                    </ul>
+                    <p class="mt-4 text-sm font-mono text-eq-danger">
+                        EL USO DE ESTE SOFTWARE ES BAJO SU PROPIO RIESGO. ALEJANDRO GABRIEL MARTIN Y NIEMARCORP NO SE HACEN RESPONSABLES DE NINGUNA PÉRDIDA FINANCIERA DIRECTA O INDIRECTA CAUSADA POR EL USO DE ESTA PLATAFORMA.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 3. Propiedad Intelectual -->
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="text-eq-primary font-mono">03.</span> Propiedad Intelectual
+                </h2>
+                <p>
+                    Todo el código fuente, los algoritmos de análisis (incluida la implementación lógica de Kähler), el diseño de interfaz (UI/UX) y la marca "EdgeQuantia" son propiedad intelectual exclusiva de Alejandro Gabriel Martin.
+                </p>
+                <p class="mt-4">
+                    Queda prohibida la ingeniería inversa, la redistribución comercial o la copia del código fuente expuesto sin la autorización expresa y por escrito del titular.
+                </p>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-white/10 bg-black py-8 text-center font-mono text-xs">
+        <p class="text-gray-600">© 2026 EdgeQuantia by NieMarCorp.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

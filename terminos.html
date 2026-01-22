@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos | EdgeQuantia</title>
+    <meta name="robots" content="noindex, follow">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eq: { bg: '#020617', primary: '#10b981', text: '#f8fafc' }
+                    },
+                    fontFamily: {
+                        sans: ['Rajdhani', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style> body { background-color: #020617; color: #f8fafc; } </style>
+</head>
+<body class="antialiased font-sans">
+
+    <nav class="w-full border-b border-white/5 bg-[#020617] p-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-2 group text-eq-primary hover:text-white transition-colors">
+                <i data-lucide="power" class="w-5 h-5"></i>
+                <span class="font-mono text-sm">/system/accept</span>
+            </a>
+            <span class="font-sans font-bold text-white tracking-widest uppercase">Edge<span class="text-eq-primary">Quantia</span></span>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-16">
+        <h1 class="text-4xl font-bold uppercase tracking-wider mb-8">Términos y Condiciones</h1>
+
+        <div class="space-y-8 text-gray-300">
+            
+            <div class="border-l-4 border-eq-primary pl-6">
+                <p class="font-bold text-white mb-2">1. Aceptación</p>
+                <p>Al acceder y utilizar EdgeQuantia, usted acepta estar legalmente vinculado por estos términos. Si no está de acuerdo con alguna parte, debe detener el uso del software inmediatamente.</p>
+            </div>
+
+            <div>
+                <p class="font-bold text-white mb-2">2. Naturaleza del Servicio</p>
+                <p>EdgeQuantia se proporciona como una herramienta de software "TAL CUAL" (AS IS) y "SEGÚN DISPONIBILIDAD". No garantizamos que el servicio sea ininterrumpido, seguro o libre de errores. Los datos de mercado provienen de fuentes públicas y pueden tener retrasos.</p>
+            </div>
+
+            <div>
+                <p class="font-bold text-white mb-2">3. Uso Prohibido</p>
+                <p>Usted acepta no utilizar esta plataforma para:</p>
+                <ul class="list-disc ml-5 mt-2 space-y-1 text-sm">
+                    <li>Realizar actividades ilegales o fraudulentas.</li>
+                    <li>Intentar dañar, deshabilitar o sobrecargar los servidores (si los hubiera) o las conexiones API.</li>
+                    <li>Extraer datos de forma masiva (scraping) sin permiso.</li>
+                </ul>
+            </div>
+
+            <div>
+                <p class="font-bold text-white mb-2">4. Modificaciones</p>
+                <p>Nos reservamos el derecho de modificar o discontinuar, temporal o permanentemente, el servicio (o cualquier parte del mismo) con o sin previo aviso. No seremos responsables ante usted ni ante terceros por ninguna modificación, suspensión o interrupción del servicio.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-white/10 bg-black py-8 text-center font-mono text-xs">
+        <p class="text-gray-600">© 2026 EdgeQuantia.</p>
+    </footer>
+
+    <script> lucide.createIcons(); </script>
+</body>
+</html>
