@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EdgeQuantia | Terminal de Análisis Cuantitativo</title>
-    <meta name="description" content="Plataforma gratuita de herramientas para trading institucional. Calculadoras de riesgo, análisis de volatilidad y métricas Kähler.">
+    <meta name="description" content="Plataforma de demostración técnica para trading algorítmico. Desarrollado por Alejandro G. Martin (NieMarCorp).">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Fonts -->
+    <!-- Fonts: Rajdhani (Tech/Sci-fi) & JetBrains Mono (Code) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Iconos -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Chart.js para visualización de datos en vivo -->
+    <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
@@ -26,13 +26,13 @@
                 extend: {
                     colors: {
                         eq: {
-                            bg: '#020617',     
+                            bg: '#020617',      
                             surface: '#0f172a', 
-                            primary: '#10b981', 
-                            accent: '#8b5cf6',  
+                            primary: '#10b981', // Verde Trading
+                            accent: '#8b5cf6',  // Violeta Tech
                             danger: '#ef4444', 
                             warning: '#f59e0b',
-                            text: '#f8fafc'     
+                            text: '#f8fafc'      
                         }
                     },
                     fontFamily: {
@@ -55,11 +55,12 @@
             overflow-x: hidden;
         }
         
+        /* Efecto Vidrio (Glassmorphism) mejorado */
         .glass-tool {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
 
         .eq-input {
@@ -75,7 +76,7 @@
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
         }
 
-        /* Scrollbar */
+        /* Scrollbar estilo Terminal */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #020617; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
@@ -84,52 +85,74 @@
         .terminal-text {
             text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
         }
+
+        /* Canvas de fondo */
+        #market-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3; /* Sutil */
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 
+    <!-- CANVAS FONDO ANIMADO -->
+    <canvas id="market-bg"></canvas>
+
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 top-0 start-0 border-b border-white/5 bg-[#020617]/95 backdrop-blur-md">
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-white/5 bg-[#020617]/90 backdrop-blur-md">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse group">
                 <div class="relative w-10 h-10 overflow-hidden rounded bg-eq-surface border border-eq-accent/30 group-hover:border-eq-primary transition-colors flex items-center justify-center">
-                    <img src="./Gemini_Generated_Image_h4zkrph4zkrph4zk.jpg" class="w-full h-full object-cover opacity-90" alt="EdgeQuantia Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                    <div class="hidden flex-col items-center justify-center leading-none">
+                    <!-- Placeholder Logo o Imagen -->
+                    <div class="flex flex-col items-center justify-center leading-none">
                         <span class="text-eq-primary font-bold font-mono text-xs">EQ</span>
                     </div>
                 </div>
                 <div class="flex flex-col leading-none">
                     <span class="text-xl font-bold tracking-widest text-white font-sans uppercase">Edge<span class="text-eq-primary">Quantia</span></span>
-                    <span class="text-[10px] text-gray-500 font-mono tracking-widest">OPEN ANALYTICS PLATFORM</span>
+                    <span class="text-[9px] text-gray-500 font-mono tracking-widest uppercase">By Alejandro G. Martin</span>
                 </div>
             </a>
             
             <div class="flex md:order-2 space-x-3">
-                 <div class="hidden md:flex items-center mr-4 px-3 py-1 bg-gray-900 rounded border border-gray-800">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
-                    <span class="text-xs font-mono text-green-400" id="connectionStatus">SYSTEM ONLINE</span>
+                 <div class="hidden md:flex items-center mr-4 px-3 py-1 bg-gray-900 rounded border border-gray-800 shadow-inner">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse mr-2"></span>
+                    <span class="text-[10px] font-mono text-green-400" id="connectionStatus">SYSTEM ONLINE</span>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-10 overflow-hidden">
+    <section class="relative pt-32 pb-8 overflow-hidden">
         <div class="py-8 px-4 mx-auto max-w-screen-xl text-center z-10 relative">
-            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-6xl font-sans uppercase">
-                Institutional <span class="text-transparent bg-clip-text bg-gradient-to-r from-eq-primary via-emerald-300 to-eq-accent">Live Scanner</span>
+            
+            <div class="inline-flex items-center justify-center px-3 py-1 mb-4 text-xs font-mono text-eq-accent border border-eq-accent/30 rounded-full bg-eq-accent/5">
+                <span class="w-2 h-2 mr-2 bg-eq-accent rounded-full animate-ping"></span>
+                DEMOSTRACIÓN TÉCNICA - NO APTO PARA TRADING REAL
+            </div>
+
+            <h1 class="mb-4 text-5xl font-extrabold tracking-tight leading-none text-white md:text-7xl font-sans uppercase drop-shadow-lg">
+                Algorithmic <span class="text-transparent bg-clip-text bg-gradient-to-r from-eq-primary via-emerald-300 to-eq-accent">Market Scanner</span>
             </h1>
-            <p class="text-gray-400 max-w-2xl mx-auto">
-                Implementación web de algoritmos de <span class="text-eq-accent">Fuerza Kähler</span> y detección de anomalías de volumen en tiempo real para BTC/USD.
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg font-light">
+                Implementación web de algoritmos de detección de anomalías y <span class="text-eq-accent font-bold">Fuerza Kähler</span>.
+                <br>Desarrollado como parte del portafolio tecnológico de <strong class="text-white">NieMarCorp</strong>.
             </p>
         </div>
     </section>
 
     <!-- MAIN DASHBOARD -->
-    <section id="dashboard" class="py-8 relative z-10">
+    <section id="dashboard" class="py-4 relative z-10 flex-grow">
         <div class="max-w-screen-xl mx-auto px-4 grid lg:grid-cols-3 gap-6">
             
-            <!-- COLUMNA IZQUIERDA: CALCULADORA (Herramienta Estática) -->
+            <!-- COLUMNA IZQUIERDA: HERRAMIENTAS -->
             <div class="lg:col-span-1 space-y-6">
                 <!-- Calculadora -->
                 <div class="glass-tool rounded-xl p-6 border-t-2 border-t-eq-primary">
@@ -140,80 +163,82 @@
                     
                     <form id="riskForm" class="space-y-4">
                         <div>
-                            <label class="block text-xs text-gray-400 font-mono mb-1">CAPITAL (USD)</label>
+                            <label class="block text-[10px] text-gray-500 font-mono mb-1 uppercase">Capital (USD)</label>
                             <input type="number" id="accountSize" value="10000" class="eq-input w-full p-2 rounded text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 font-mono mb-1">RIESGO (%)</label>
+                            <label class="block text-[10px] text-gray-500 font-mono mb-1 uppercase">Riesgo por Op. (%)</label>
                             <input type="number" id="riskPercent" value="1.0" step="0.1" class="eq-input w-full p-2 rounded text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-gray-400 font-mono mb-1">ENTRADA</label>
+                                <label class="block text-[10px] text-gray-500 font-mono mb-1 uppercase">Entrada</label>
                                 <input type="number" id="entryPrice" value="65000" class="eq-input w-full p-2 rounded text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-400 font-mono mb-1">STOP LOSS</label>
-                                <input type="number" id="stopPrice" value="64500" class="eq-input w-full p-2 rounded text-sm text-eq-danger">
+                                <label class="block text-[10px] text-gray-500 font-mono mb-1 uppercase">Stop Loss</label>
+                                <input type="number" id="stopPrice" value="64500" class="eq-input w-full p-2 rounded text-sm text-eq-danger border-eq-danger/30">
                             </div>
                         </div>
-                        <button type="button" onclick="calculateRisk()" class="w-full bg-eq-primary/10 hover:bg-eq-primary/20 text-eq-primary border border-eq-primary/50 font-mono font-bold py-2 rounded mt-2 transition-all">
-                            CALCULAR POSICIÓN
+                        <button type="button" onclick="calculateRisk()" class="w-full bg-eq-primary/10 hover:bg-eq-primary/20 text-eq-primary border border-eq-primary/50 font-mono font-bold py-2 rounded mt-2 transition-all text-xs tracking-widest hover:shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                            >> CALCULAR POSICIÓN
                         </button>
                     </form>
 
                     <!-- Resultados Calculadora -->
-                    <div class="mt-4 pt-4 border-t border-gray-700/50">
+                    <div class="mt-6 pt-4 border-t border-gray-700/50">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-gray-500 font-mono">RIESGO:</span>
-                            <span id="riskAmountResult" class="text-sm font-bold text-eq-danger">0.00 USD</span>
+                            <span class="text-xs text-gray-500 font-mono">PÉRDIDA MÁXIMA:</span>
+                            <span id="riskAmountResult" class="text-sm font-bold text-eq-danger font-mono">0.00 USD</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500 font-mono">TAMAÑO:</span>
-                            <span id="posSizeResult" class="text-sm font-bold text-white">0.00 USD</span>
+                            <span class="text-xs text-gray-500 font-mono">TAMAÑO POSICIÓN:</span>
+                            <span id="posSizeResult" class="text-sm font-bold text-white font-mono">0.00 USD</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Panel de Estado del Mercado (Scanner Output) -->
+                <!-- Estado del Mercado -->
                 <div class="glass-tool rounded-xl p-6 border-t-2 border-t-eq-accent">
-                    <h3 class="text-lg text-white font-bold font-sans uppercase tracking-wider mb-4">Señales Algorítmicas</h3>
+                    <h3 class="text-lg text-white font-bold font-sans uppercase tracking-wider mb-4">Señales en Vivo</h3>
                     
                     <div class="space-y-4">
                         <div class="bg-gray-900/50 p-3 rounded border border-gray-800">
-                            <span class="text-[10px] text-gray-500 font-mono block mb-1">ESTADO MERCADO (KAHLER)</span>
-                            <div id="marketStatus" class="text-lg font-bold text-gray-400 font-mono">ESPERANDO DATOS...</div>
+                            <span class="text-[9px] text-gray-500 font-mono block mb-1 uppercase">Tendencia (Algoritmo Kähler)</span>
+                            <div id="marketStatus" class="text-xl font-bold text-gray-400 font-mono tracking-tight">INICIANDO...</div>
                         </div>
 
                         <div class="bg-gray-900/50 p-3 rounded border border-gray-800">
-                            <span class="text-[10px] text-gray-500 font-mono block mb-1">SEGURIDAD VOLUMEN (FORENSE)</span>
-                            <div id="volStatus" class="text-sm font-bold text-gray-400 font-mono">ANALIZANDO...</div>
+                            <span class="text-[9px] text-gray-500 font-mono block mb-1 uppercase">Anomalía de Volumen</span>
+                            <div id="volStatus" class="text-sm font-bold text-gray-400 font-mono">ESCANEO ACTIVO</div>
                         </div>
 
-                        <div class="flex justify-between text-xs font-mono mt-2">
-                            <span class="text-gray-500">PRECIO ACTUAL:</span>
-                            <span id="livePrice" class="text-white terminal-text">$0.00</span>
+                        <div class="flex justify-between text-xs font-mono mt-2 pt-2 border-t border-white/5">
+                            <span class="text-gray-500">BTC/USDT (Binance):</span>
+                            <span id="livePrice" class="text-white terminal-text font-bold text-base">$0.00</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: GRÁFICOS EN VIVO (Scanner Python Port) -->
+            <!-- COLUMNA DERECHA: GRÁFICOS -->
             <div class="lg:col-span-2 space-y-6">
                 
-                <!-- Gráfico Principal: Precio & Anomalías -->
-                <div class="glass-tool rounded-xl p-4 h-[400px] flex flex-col relative">
+                <!-- Gráfico Principal -->
+                <div class="glass-tool rounded-xl p-4 h-[400px] flex flex-col relative group">
                     <div class="absolute top-4 left-4 z-10 flex gap-2">
-                        <span class="bg-gray-900/80 px-2 py-1 rounded text-[10px] text-eq-primary font-mono border border-eq-primary/20">BTC/USDT</span>
-                        <span class="bg-gray-900/80 px-2 py-1 rounded text-[10px] text-eq-accent font-mono border border-eq-accent/20">1S INTERVAL</span>
+                        <span class="bg-black/50 backdrop-blur px-2 py-1 rounded text-[10px] text-eq-primary font-mono border border-eq-primary/20">LIVE FEED</span>
+                        <span class="bg-black/50 backdrop-blur px-2 py-1 rounded text-[10px] text-eq-accent font-mono border border-eq-accent/20">1S TICK</span>
                     </div>
+                    <!-- Efecto de escaneo decorativo -->
+                    <div class="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-eq-primary/5 to-transparent h-[10%] w-full animate-[float_3s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <canvas id="mainChart"></canvas>
                 </div>
 
-                <!-- Gráfico Secundario: Fuerza Kähler -->
+                <!-- Gráfico Secundario -->
                 <div class="glass-tool rounded-xl p-4 h-[250px] flex flex-col relative">
                     <div class="absolute top-2 left-4 z-10">
-                         <span class="text-[10px] text-gray-400 font-mono uppercase">Indicador de Fuerza Kähler (Momentum * Volumen)</span>
+                         <span class="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Oscilador de Fuerza (Momentum * Vol)</span>
                     </div>
                     <canvas id="kahlerChart"></canvas>
                 </div>
@@ -222,12 +247,42 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-black border-t border-gray-900 py-8 font-mono text-xs mt-auto">
-        <div class="max-w-screen-xl mx-auto px-4 text-center">
-            <p class="text-gray-600">Desarrollado con ❤️ por <a href="https://niemarcorp.com" class="text-blue-500 hover:underline">NieMarCorp</a></p>
-            <div class="mt-4 text-gray-700 max-w-2xl mx-auto">
-                <strong>NOTA TÉCNICA:</strong> Este dashboard conecta vía WebSocket público. La lógica de "Fuerza Kähler" se ejecuta localmente en su navegador usando JavaScript. No constituye asesoramiento financiero.
+    <!-- Footer Legal & Profesional -->
+    <footer class="bg-[#010409] border-t border-gray-900 py-12 mt-12 font-mono text-xs relative z-10">
+        <div class="max-w-screen-xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                
+                <!-- Identidad del Desarrollador -->
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-bold uppercase mb-2 text-sm tracking-wider">Desarrollado por <span class="text-eq-primary">NieMarCorp</span></h4>
+                    <p class="text-gray-600 mb-4 leading-relaxed max-w-md">
+                        Proyecto de portafolio personal de <strong class="text-gray-400">Alejandro Gabriel Martin</strong>. 
+                        Este terminal demuestra capacidades de ingeniería de software, uso de WebSockets y visualización de datos financieros en tiempo real.
+                    </p>
+                    <div class="flex items-center justify-center md:justify-start space-x-4">
+                        <a href="mailto:contacto@niemarcorp.com" class="text-gray-500 hover:text-white transition-colors flex items-center">
+                            <i data-lucide="mail" class="w-3 h-3 mr-1"></i> Contacto
+                        </a>
+                        <a href="https://niemarcorp.com" class="text-gray-500 hover:text-white transition-colors flex items-center">
+                            <i data-lucide="globe" class="w-3 h-3 mr-1"></i> NiemarCorp.com
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enlaces Legales y Descargos -->
+                <div class="text-center md:text-right space-y-4">
+                    <div class="space-x-4 text-gray-500">
+                        <a href="aviso-legal.html" class="hover:text-eq-primary transition-colors underline decoration-dotted">Aviso Legal</a>
+                        <a href="privacidad.html" class="hover:text-eq-primary transition-colors underline decoration-dotted">Privacidad</a>
+                        <a href="terminos.html" class="hover:text-eq-primary transition-colors underline decoration-dotted">Términos</a>
+                    </div>
+                    
+                    <div class="border border-gray-800 bg-gray-900/50 p-3 rounded text-[10px] text-gray-500 leading-tight text-justify md:text-right ml-auto max-w-lg">
+                        <strong>DESCARGO DE RESPONSABILIDAD:</strong> "EdgeQuantia" y "NieMarCorp" son nombres de fantasía utilizados con fines creativos y profesionales. No representan una entidad financiera registrada ni un bróker. 
+                        Las herramientas aquí presentadas son <strong>EXCLUSIVAMENTE EDUCATIVAS</strong>. El trading de criptomonedas conlleva un alto riesgo de pérdida. No utilice este software para tomar decisiones financieras reales.
+                    </div>
+                    <p class="text-gray-700">© 2026 Alejandro Gabriel Martin. Todos los derechos reservados.</p>
+                </div>
             </div>
         </div>
     </footer>
@@ -236,12 +291,84 @@
     <script>
         lucide.createIcons();
 
+        // --- 0. BACKGROUND ANIMATION (Ghost Candles) ---
+        const canvasBg = document.getElementById('market-bg');
+        const ctxBg = canvasBg.getContext('2d');
+        let width, height;
+        let candles = [];
+
+        function resizeBg() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvasBg.width = width;
+            canvasBg.height = height;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        class GhostCandle {
+            constructor() {
+                this.reset();
+                this.x = Math.random() * width; // Start anywhere initially
+            }
+
+            reset() {
+                this.x = width + Math.random() * 50; // Start off-screen right
+                this.y = Math.random() * (height * 0.8) + (height * 0.1); // Vertical random
+                this.speed = Math.random() * 0.5 + 0.2; // Slow scroll speed
+                this.width = Math.random() * 10 + 5;
+                this.height = Math.random() * 60 + 10;
+                this.isGreen = Math.random() > 0.5;
+                this.opacity = Math.random() * 0.15 + 0.05; // Very faint
+                this.wickHeight = this.height + Math.random() * 40;
+            }
+
+            update() {
+                this.x -= this.speed; // Move left
+                if (this.x < -50) this.reset(); // Loop
+            }
+
+            draw() {
+                ctxBg.fillStyle = this.isGreen ? `rgba(16, 185, 129, ${this.opacity})` : `rgba(239, 68, 68, ${this.opacity})`;
+                
+                // Draw Body
+                const bodyY = this.y - this.height / 2;
+                ctxBg.fillRect(this.x, bodyY, this.width, this.height);
+
+                // Draw Wick
+                const wickY = this.y - this.wickHeight / 2;
+                const wickX = this.x + this.width / 2;
+                ctxBg.fillRect(wickX - 0.5, wickY, 1, this.wickHeight);
+            }
+        }
+
+        // Create initial candles
+        for (let i = 0; i < 40; i++) {
+            candles.push(new GhostCandle());
+        }
+
+        function animateBg() {
+            ctxBg.clearRect(0, 0, width, height);
+            candles.forEach(c => {
+                c.update();
+                c.draw();
+            });
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+
         // --- 1. CONFIGURACIÓN DE GRÁFICOS (Chart.js) ---
         Chart.defaults.color = '#64748b';
         Chart.defaults.font.family = 'JetBrains Mono';
 
         const ctxMain = document.getElementById('mainChart').getContext('2d');
         const ctxKahler = document.getElementById('kahlerChart').getContext('2d');
+
+        // Gradiente para el gráfico de precio
+        const gradientPrice = ctxMain.createLinearGradient(0, 0, 0, 400);
+        gradientPrice.addColorStop(0, 'rgba(0, 255, 204, 0.2)');
+        gradientPrice.addColorStop(1, 'rgba(0, 255, 204, 0)');
 
         // Gráfico Principal (Precio)
         const mainChart = new Chart(ctxMain, {
@@ -252,26 +379,43 @@
                     label: 'BTC Price',
                     data: [],
                     borderColor: '#00ffcc',
+                    backgroundColor: gradientPrice,
                     borderWidth: 2,
                     pointRadius: 0,
-                    tension: 0.1,
-                    yAxisID: 'y'
+                    pointHoverRadius: 4,
+                    fill: true,
+                    tension: 0.2, // Un poco de suavizado
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(2, 6, 23, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#00ffcc',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return '$ ' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
                 scales: {
-                    x: { display: false }, // Ocultar eje X para limpieza
+                    x: { display: false },
                     y: { 
                         position: 'right',
                         grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: '#94a3b8' }
+                        ticks: { color: '#475569', font: {size: 10} }
                     }
                 },
-                animation: false // Desactivar para rendimiento en tiempo real
+                animation: false
             }
         });
 
@@ -285,13 +429,10 @@
                     data: [],
                     backgroundColor: (context) => {
                         const val = context.raw;
-                        return val >= 0 ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+                        return val >= 0 ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)';
                     },
-                    borderColor: (context) => {
-                         const val = context.raw;
-                        return val >= 0 ? '#10b981' : '#ef4444';
-                    },
-                    borderWidth: 1
+                    borderRadius: 2,
+                    borderSkipped: false
                 }]
             },
             options: {
@@ -301,29 +442,25 @@
                 scales: {
                     x: { display: false },
                     y: { 
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { display: false } // Ocultar valores Y para limpieza
+                        grid: { color: 'rgba(255,255,255,0.03)' },
+                        ticks: { display: false } 
                     }
                 },
                 animation: false
             }
         });
 
-        // --- 2. LÓGICA DE DATOS Y ALGORITMOS (Traducción Python -> JS) ---
+        // --- 2. LÓGICA DE DATOS Y ALGORITMOS ---
         
-        // Variables de estado
-        let priceData = []; // Array de objetos {close, open, volume, time}
-        const MAX_POINTS = 50; // Mantener solo los últimos 50 puntos para rendimiento
+        let priceData = [];
+        const MAX_POINTS = 60; // 1 Minuto aprox de historial visual
         
-        // Conexión WebSocket a Binance (Datos reales sin CORS)
+        // Conexión WebSocket a Binance
         const ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
         
         ws.onmessage = (event) => {
             const msg = JSON.parse(event.data);
-            const kline = msg.k; // Objeto kline de Binance
-            
-            // Solo procesamos si la vela está cerrada o cada X tiempo para actualizar
-            // Para efecto "Live", usamos los datos tal cual llegan
+            const kline = msg.k;
             
             const currentPrice = parseFloat(kline.c);
             const openPrice = parseFloat(kline.o);
@@ -334,56 +471,57 @@
         };
 
         ws.onopen = () => {
-            document.getElementById('connectionStatus').innerText = "CONEXIÓN ESTABLE (BINANCE)";
-            document.getElementById('connectionStatus').classList.remove('text-red-500');
-            document.getElementById('connectionStatus').classList.add('text-green-400');
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.innerText = "CONEXIÓN ESTABLE (BINANCE)";
+            statusEl.classList.remove('text-red-500');
+            statusEl.classList.add('text-green-400');
+            statusEl.previousElementSibling.classList.add('bg-green-500', 'animate-pulse');
+            statusEl.previousElementSibling.classList.remove('bg-red-500');
         };
 
         ws.onerror = () => {
-            document.getElementById('connectionStatus').innerText = "CONEXIÓN PERDIDA";
-            document.getElementById('connectionStatus').classList.remove('text-green-400');
-            document.getElementById('connectionStatus').classList.add('text-red-500');
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.innerText = "ERROR CONEXIÓN";
+            statusEl.classList.remove('text-green-400');
+            statusEl.classList.add('text-red-500');
+            statusEl.previousElementSibling.classList.remove('bg-green-500', 'animate-pulse');
+            statusEl.previousElementSibling.classList.add('bg-red-500');
         }
 
-        // Función Principal de Cálculo y Actualización
         function updateDashboard(close, open, volume, time) {
-            // 1. Actualizar Precio en UI
-            document.getElementById('livePrice').innerText = `$${close.toFixed(2)}`;
+            // UI Update
+            document.getElementById('livePrice').innerText = `$${close.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
             
-            // 2. Almacenar datos históricos
+            // Data Management
             priceData.push({ close, open, volume, rawStrength: 0, kahler: 0 });
             if(priceData.length > MAX_POINTS) priceData.shift();
 
-            // 3. CALCULAR INDICADORES (Lógica del Script Python)
+            // Calculations
             calculateIndicators();
 
-            // 4. Actualizar Gráficos
+            // Charts
             updateCharts(time);
 
-            // 5. Analizar Señales
+            // Analysis
             analyzeSignals();
         }
 
         function calculateIndicators() {
-            // Necesitamos al menos unos puntos para calcular EMA
             if (priceData.length < 2) return;
 
-            // --- A. Fuerza Kahler ---
-            // Python: data['Raw_Strength'] = (data['Close'] - data['Open']) * data['Volume']
             const lastIdx = priceData.length - 1;
             const current = priceData[lastIdx];
-            current.rawStrength = (current.close - current.open) * current.volume;
-
-            // Python: data['Kahler_Strength'] = data['Raw_Strength'].ewm(span=13)...
-            // EMA Simple implementation
-            const alpha = 2 / (13 + 1); // Smoothing factor for span=13
-            const prevKahler = priceData[lastIdx - 1].kahler || 0;
             
+            // Lógica Kähler Simplificada para Demo: (Close - Open) * Volume * Factor
+            current.rawStrength = (current.close - current.open) * Math.log(current.volume + 1);
+
+            // EMA Smoothing
+            const alpha = 0.2; // Rápido para demo visual
+            const prevKahler = priceData[lastIdx - 1].kahler || 0;
             current.kahler = (current.rawStrength * alpha) + (prevKahler * (1 - alpha));
         }
 
         function updateCharts(time) {
-            // Actualizar Chart Main
             mainChart.data.labels.push(time);
             mainChart.data.datasets[0].data.push(priceData[priceData.length-1].close);
             
@@ -391,9 +529,8 @@
                 mainChart.data.labels.shift();
                 mainChart.data.datasets[0].data.shift();
             }
-            mainChart.update();
+            mainChart.update('none'); // 'none' para mejor performance
 
-            // Actualizar Chart Kahler
             kahlerChart.data.labels.push(time);
             kahlerChart.data.datasets[0].data.push(priceData[priceData.length-1].kahler);
             
@@ -401,7 +538,7 @@
                 kahlerChart.data.labels.shift();
                 kahlerChart.data.datasets[0].data.shift();
             }
-            kahlerChart.update();
+            kahlerChart.update('none');
         }
 
         function analyzeSignals() {
@@ -410,54 +547,36 @@
             const last = priceData[priceData.length - 1];
             const prev = priceData[priceData.length - 2];
 
-            // --- Señal Kahler ---
-            let statusText = "⚪ NEUTRAL";
-            let statusColor = "text-gray-400";
+            let statusText = "⚪ NEUTRAL - ESPERANDO VOLATILIDAD";
+            let statusColor = "text-gray-500";
 
-            if (last.kahler > 0 && prev.kahler <= 0) {
-                statusText = "🟢 COMPRA FUERTE (CRUCE)";
-                statusColor = "text-eq-primary";
-            } else if (last.kahler < 0 && prev.kahler >= 0) {
-                statusText = "🔴 VENTA FUERTE (CRUCE)";
-                statusColor = "text-eq-danger";
-            } else if (last.kahler > 0) {
-                statusText = "🟢 TENDENCIA ALCISTA";
-                statusColor = "text-green-400";
-            } else if (last.kahler < 0) {
-                statusText = "🔴 TENDENCIA BAJISTA";
-                statusColor = "text-red-400";
+            // Umbrales pequeños para que se vea actividad en la demo
+            const threshold = 50; 
+
+            if (last.kahler > threshold) {
+                statusText = "🟢 PRESIÓN DE COMPRA DETECTADA";
+                statusColor = "text-eq-primary animate-pulse";
+            } else if (last.kahler < -threshold) {
+                statusText = "🔴 PRESIÓN DE VENTA DETECTADA";
+                statusColor = "text-eq-danger animate-pulse";
             }
 
             const marketStatusEl = document.getElementById('marketStatus');
             marketStatusEl.innerText = statusText;
             marketStatusEl.className = `text-lg font-bold font-mono ${statusColor}`;
 
-            // --- Análisis Forense de Volumen (Simplificado para JS Realtime) ---
-            // Calculamos media y std dev de los últimos 20 puntos del array
-            const volumes = priceData.map(d => d.volume);
-            const meanVol = volumes.reduce((a, b) => a + b, 0) / volumes.length;
-            const stdVol = Math.sqrt(volumes.map(x => Math.pow(x - meanVol, 2)).reduce((a, b) => a + b) / volumes.length);
-            
-            const zScore = (last.volume - meanVol) / (stdVol || 1); // Evitar div por 0
-
-            let volText = "✅ VOLUMEN NORMAL";
-            let volColor = "text-green-400";
-
-            if (zScore > 3.0) {
-                volText = "⚠️ ALERTA: MANIPULACIÓN DETECTADA";
-                volColor = "text-eq-warning animate-pulse";
-            } else if (zScore > 2.0) {
-                volText = "🔍 INFO: ACTIVIDAD INSTITUCIONAL";
-                volColor = "text-blue-400";
-            }
-
+            // Volumne Check simple
             const volStatusEl = document.getElementById('volStatus');
-            volStatusEl.innerText = `${volText} (Z: ${zScore.toFixed(2)})`;
-            volStatusEl.className = `text-sm font-bold font-mono ${volColor}`;
+            if (last.volume > 50) { // Umbral arbitrario para demo
+                 volStatusEl.innerText = "⚠️ VOLUMEN ALTO";
+                 volStatusEl.className = "text-xs font-bold font-mono text-eq-warning";
+            } else {
+                 volStatusEl.innerText = "✅ VOLUMEN NORMAL";
+                 volStatusEl.className = "text-xs font-bold font-mono text-green-500";
+            }
         }
 
-
-        // --- 3. LÓGICA DE CALCULADORA (Existente) ---
+        // --- 3. LÓGICA CALCULADORA ---
         function calculateRisk() {
             const account = parseFloat(document.getElementById('accountSize').value);
             const riskPct = parseFloat(document.getElementById('riskPercent').value);
@@ -468,8 +587,12 @@
 
             const riskAmount = account * (riskPct / 100);
             const priceDiff = Math.abs(entry - stop);
-            const units = riskAmount / priceDiff;
-            const positionSize = units * entry;
+            
+            // Evitar división por cero
+            if(priceDiff === 0) return;
+
+            const units = riskAmount / priceDiff; // Cantidad de BTC
+            const positionSize = units * entry; // Valor nocional en USD
 
             animateValue("riskAmountResult", 0, riskAmount, 500, "$");
             animateValue("posSizeResult", 0, positionSize, 500, "$");
@@ -481,13 +604,13 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerHTML = prefix + (progress * (end - start) + start).toFixed(2);
+                obj.innerHTML = prefix + (progress * (end - start) + start).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
         }
         
-        // Calcular una vez al inicio para UI
+        // Calcular inicial
         calculateRisk();
 
     </script>
